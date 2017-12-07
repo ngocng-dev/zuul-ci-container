@@ -1,0 +1,93 @@
+---
+- name: Install dumb init
+  get_url:
+    dest: /usr/bin/dumb-init
+    url: https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64
+    mode: 0775
+    validate_certs: no
+
+- name: Bootstrap rpm python bindings
+  command: yum -y install rpm-python
+
+- name: Install epel
+  yum: 
+    name: epel-release
+    state: present 
+    disable_gpg_check: yes
+
+- name: Install required packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - gcc
+    - python-devel
+    - python-pip
+
+- name: Install libcurl package
+  yum:
+    name: libcurl
+    state: present
+    update_cache: yes
+
+- name: Update git package for getting curl https helper loaded
+  yum:
+    name: git
+    state: latest
+
+- name: Clone Nodepool repo
+  git:
+    repo: 'git://github.com/openstack-infra/nodepool'
+    dest: /opt/nodepool
+    version: feature/zuulv3
+
+- name: Install pip packages
+  pip:
+    requirements: /opt/nodepool/requirements.txt
+
+- name: Install Nodepool from source
+  pip:
+    name: /opt/nodepool
+    editable: yes
+
+- name: Create Nodepool user
+  user:
+    name: "{{ NODEPOOL_USER }}"
+    uid: 1000
+    group: root
+    state: present
+    createhome: yes
+    home: "{{ NODEPOOL_USER_HOME }}"
+
+- name: Create /etc/nodepool folder
+  file:
+    path: /etc/nodepool
+    state: directory
+    mode: 0755
+
+- name: Create /etc/nodepool/secure.conf file
+  file:
+    path: /etc/nodepool/secure.conf
+    state: touch
+    mode: 0644
+
+- name: Template the Nodepool config file
+  template:
+    src: nodepool_yaml.j2
+    dest: /etc/nodepool/nodepool.yaml
+    mode: 0644
+
+- name: Create .config/openstack folder
+  file:
+    path: "{{ NODEPOOL_USER_HOME }}/.config/openstack"
+    state: directory
+    mode: 0755
+
+- name: Template the Nodepool clouds file
+  template:
+    src: clouds_yaml.j2
+    dest: "{{ NODEPOOL_USER_HOME }}/.config/openstack/clouds.yaml"
+    mode: 0644
+
+- name: Clean yum cache
+  command: yum clean all

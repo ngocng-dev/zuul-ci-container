@@ -1,0 +1,64 @@
+version: "2"
+
+settings:
+  conductor:
+    base: centos:7
+  project_name: zuul-ci-container
+
+defaults:
+  ZUUL_USER: zuul
+  ZUUL_USER_HOME: /var/lib/zuul
+  ZUUL_TENANT_CONFIG_PATH: /etc/zuul/main.yaml
+  NODEPOOL_USER: nodepool
+  NODEPOOL_USER_HOME: /var/lib/nodepool
+  NODEPOOL_LABELS:
+    - name: test-label
+      min_ready: 1
+  NODEPOOL_PROVIDERS:
+    - name: test-provider
+      cloud: test-cloud
+      cloud_images:
+        - name: test-image
+      pools:
+        - name: main
+          max_servers: 1
+          networks:
+            - test-network
+          labels:
+            - name: test-label
+              cloud_image: test-image
+              flavor_name: test-flavor
+              key_name: test-key
+  NODEPOOL_CLOUDS:
+    - name: test-cloud
+      auth_url: https://test-cloud:13000
+      project_name: test-project
+      username: test-user
+      password: test-password
+      region: test-region
+  ZOOKEEPER_USER: zookeeper
+  ZOOKEEPER_USER_HOME: /var/lib/zookeeper
+
+services:
+  zookeeper:
+    from: "centos:7"
+    roles:
+      - ansible-role-zookeeper-container
+    expose:
+      - 2181
+    user: "{{ ZOOKEEPER_USER }}"
+    command: ["/usr/bin/dumb-init", "/usr/lib/zookeeper/bin/zkServer.sh", "start-foreground"]
+
+  zuul-scheduler:
+    from: "centos:7"
+    roles:
+      - ansible-role-zuul-container
+    user: "{{ ZUUL_USER }}"
+    command: ["/usr/bin/dumb-init", "/usr/bin/zuul-scheduler", "-d"]
+
+  nodepool-launcher:
+    from: "centos:7"
+    roles:
+      - ansible-role-nodepool-container
+    user: "{{ NODEPOOL_USER }}"
+    command: ["/usr/bin/dumb-init", "/usr/bin/nodepool-launcher", "-d"]

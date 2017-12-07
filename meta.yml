@@ -1,0 +1,12 @@
+galaxy_info:
+  author: Ricardo Carrillo Cruz
+  description: Zuul CI Ansible Container App
+  company: Ansible
+
+  license: Apache
+
+  min_ansible_container_version: 0.9.2
+
+  tags:
+    - container
+    - ci

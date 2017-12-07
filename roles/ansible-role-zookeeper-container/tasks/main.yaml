@@ -1,0 +1,36 @@
+---
+- name: Install dumb init
+  get_url:
+    dest: /usr/bin/dumb-init
+    url: https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64
+    mode: 0775
+    validate_certs: no
+
+- name: Bootstrap rpm python bindings
+  command: yum -y install rpm-python
+
+- name: Install Bigtop Centos 7 repo
+  get_url:
+    dest: /etc/yum.repos.d
+    url: https://www.apache.org/dist/bigtop/stable/repos/centos7/bigtop.repo
+    mode: 0644
+    validate_certs: no
+
+- name: Install epel, java and zookeeper
+  yum: 
+    name: "{{ item }}"
+    state: present 
+    disable_gpg_check: yes
+  with_items:
+    - epel-release
+    - java
+    - zookeeper
+
+- name: Create Zookeeper user
+  user:
+    name: "{{ ZOOKEEPER_USER }}"
+    uid: 1000
+    group: root
+    state: present
+    createhome: yes
+    home: "{{ ZOOKEEPER_USER_HOME }}"
