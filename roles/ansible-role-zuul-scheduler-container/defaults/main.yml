@@ -1,0 +1,2 @@
+---
+ZUUL_TENANT_CONFIG_PATH: /etc/zuul/main.yaml

@@ -72,11 +72,5 @@
     state: directory
     mode: 0755
 
-- name: Template the Zuul config file
-  template:
-    src: zuul_conf_scheduler.j2
-    dest: /etc/zuul/zuul.conf
-    mode: 0644
-
 - name: Clean yum cache
   command: yum clean all

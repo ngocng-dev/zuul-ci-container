@@ -23,11 +23,32 @@ services:
   zuul-scheduler:
     from: "centos:7"
     roles:
-      - ansible-role-zuul-container
+      - ansible-role-zuul-common-container
+      - ansible-role-zuul-scheduler-container
     user: "{{ ZUUL_USER }}"
     volumes:
-      - zuul-config:/etc/zuul
+      - zuul-scheduler-config:/etc/zuul
     command: ["/usr/bin/dumb-init", "/usr/bin/zuul-scheduler", "-d"]
+
+  zuul-merger:
+    from: "centos:7"
+    roles:
+      - ansible-role-zuul-common-container
+      - ansible-role-zuul-merger-container
+    user: "{{ ZUUL_USER }}"
+    volumes:
+      - zuul-merger-config:/etc/zuul
+    command: ["/usr/bin/dumb-init", "/usr/bin/zuul-merger", "-d"]
+
+  zuul-executor:
+    from: "centos:7"
+    roles:
+      - ansible-role-zuul-common-container
+      - ansible-role-zuul-executor-container
+    user: "{{ ZUUL_USER }}"
+    volumes:
+      - zuul-executor-config:/etc/zuul
+    command: ["/usr/bin/dumb-init", "/usr/bin/zuul-executor", "-d"]
 
   nodepool-launcher:
     from: "centos:7"
@@ -40,7 +61,13 @@ services:
     command: ["/usr/bin/dumb-init", "/usr/bin/nodepool-launcher", "-d"]
 
 volumes:
-  zuul-config:
+  zuul-scheduler-config:
+    docker:
+      external: True
+  zuul-merger-config:
+    docker:
+      external: True
+  zuul-executor-config:
     docker:
       external: True
   nodepool-config:
