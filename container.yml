@@ -7,37 +7,8 @@ settings:
 
 defaults:
   ZUUL_USER: zuul
-  ZUUL_USER_HOME: /var/lib/zuul
-  ZUUL_TENANT_CONFIG_PATH: /etc/zuul/main.yaml
   NODEPOOL_USER: nodepool
-  NODEPOOL_USER_HOME: /var/lib/nodepool
-  NODEPOOL_LABELS:
-    - name: test-label
-      min_ready: 1
-  NODEPOOL_PROVIDERS:
-    - name: test-provider
-      cloud: test-cloud
-      cloud_images:
-        - name: test-image
-      pools:
-        - name: main
-          max_servers: 1
-          networks:
-            - test-network
-          labels:
-            - name: test-label
-              cloud_image: test-image
-              flavor_name: test-flavor
-              key_name: test-key
-  NODEPOOL_CLOUDS:
-    - name: test-cloud
-      auth_url: https://test-cloud:13000
-      project_name: test-project
-      username: test-user
-      password: test-password
-      region: test-region
   ZOOKEEPER_USER: zookeeper
-  ZOOKEEPER_USER_HOME: /var/lib/zookeeper
 
 services:
   zookeeper:
@@ -54,6 +25,8 @@ services:
     roles:
       - ansible-role-zuul-container
     user: "{{ ZUUL_USER }}"
+    volumes:
+      - zuul-config:/etc/zuul
     command: ["/usr/bin/dumb-init", "/usr/bin/zuul-scheduler", "-d"]
 
   nodepool-launcher:
@@ -61,4 +34,18 @@ services:
     roles:
       - ansible-role-nodepool-container
     user: "{{ NODEPOOL_USER }}"
+    volumes:
+      - nodepool-config:/etc/nodepool
+      - nodepool-clouds:/etc/openstack
     command: ["/usr/bin/dumb-init", "/usr/bin/nodepool-launcher", "-d"]
+
+volumes:
+  zuul-config:
+    docker:
+      external: True
+  nodepool-config:
+    docker:
+      external: True
+  nodepool-clouds:
+    docker:
+      external: True

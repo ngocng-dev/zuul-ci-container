@@ -1,0 +1,3 @@
+---
+NODEPOOL_USER: nodepool
+NODEPOOL_USER_HOME: /var/lib/nodepool

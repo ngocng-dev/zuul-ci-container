@@ -1,0 +1,4 @@
+---
+ZUUL_USER: zuul
+ZUUL_USER_HOME: /var/lib/zuul
+ZUUL_TENANT_CONFIG_PATH: /etc/zuul/main.yaml

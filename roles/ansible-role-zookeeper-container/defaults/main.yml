@@ -1,0 +1,3 @@
+---
+ZOOKEEPER_USER: zookeeper
+ZOOKEEPER_USER_HOME: /var/lib/zookeeper

@@ -77,16 +77,16 @@
     dest: /etc/nodepool/nodepool.yaml
     mode: 0644
 
-- name: Create .config/openstack folder
+- name: Create /etc/openstack folder
   file:
-    path: "{{ NODEPOOL_USER_HOME }}/.config/openstack"
+    path: /etc/openstack
     state: directory
     mode: 0755
 
 - name: Template the Nodepool clouds file
   template:
     src: clouds_yaml.j2
-    dest: "{{ NODEPOOL_USER_HOME }}/.config/openstack/clouds.yaml"
+    dest: /etc/openstack/clouds.yaml
     mode: 0644
 
 - name: Clean yum cache
