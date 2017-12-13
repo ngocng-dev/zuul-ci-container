@@ -1,0 +1,9 @@
+- tenant:
+    name: test-tenant
+    max-nodes-per-job: 1
+    source:
+      github:
+        config-projects:
+          - test-org/common-config
+        untrusted-projects:
+          - test-org/test-untrusted-project

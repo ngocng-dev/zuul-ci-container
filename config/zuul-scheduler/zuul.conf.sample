@@ -1,0 +1,19 @@
+[scheduler]
+tenant_config=/etc/zuul/main.yaml
+
+[gearman]
+server = 127.0.0.1
+
+[gearman_server]
+listen_address = 127.0.0.1
+start = true
+
+[zookeeper]
+hosts=zookeeper
+
+[connection "github"]
+name=github
+driver=github
+app_key=/etc/zuul/github.key
+app_id=1234
+webhook_token=testtoken
