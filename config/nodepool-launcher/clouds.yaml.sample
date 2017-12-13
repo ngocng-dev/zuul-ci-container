@@ -1,0 +1,8 @@
+clouds:
+  test-cloud:
+      auth:
+        auth_url: https://test
+        project_name: test
+        username: test
+        password: test
+      region: test

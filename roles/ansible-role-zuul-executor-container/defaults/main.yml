@@ -1,0 +1,2 @@
+---
+ZUUL_CONF_PATH: config/zuul-executor/zuul.conf

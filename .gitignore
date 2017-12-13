@@ -1,1 +1,8 @@
-config.yml
+config/nodepool-launcher/*
+!config/nodepool-launcher/*.sample
+config/zuul-scheduler/*
+!config/zuul-scheduler/*.sample
+config/zuul-merger/*
+!config/zuul-merger/*.sample
+config/zuul-executor/*
+!config/zuul-executor/*.sample

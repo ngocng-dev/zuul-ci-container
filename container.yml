@@ -3,7 +3,7 @@ version: "2"
 settings:
   conductor:
     base: centos:7
-  project_name: zuul-ci-container
+  project_name: ansible-networking-zuul-ci
 
 defaults:
   ZUUL_USER: zuul
@@ -25,9 +25,9 @@ services:
     roles:
       - ansible-role-zuul-common-container
       - ansible-role-zuul-scheduler-container
+    expose:
+      - 4730
     user: "{{ ZUUL_USER }}"
-    volumes:
-      - zuul-scheduler-config:/etc/zuul
     command: ["/usr/bin/dumb-init", "/usr/bin/zuul-scheduler", "-d"]
 
   zuul-merger:
@@ -36,8 +36,6 @@ services:
       - ansible-role-zuul-common-container
       - ansible-role-zuul-merger-container
     user: "{{ ZUUL_USER }}"
-    volumes:
-      - zuul-merger-config:/etc/zuul
     command: ["/usr/bin/dumb-init", "/usr/bin/zuul-merger", "-d"]
 
   zuul-executor:
@@ -46,33 +44,16 @@ services:
       - ansible-role-zuul-common-container
       - ansible-role-zuul-executor-container
     user: "{{ ZUUL_USER }}"
-    volumes:
-      - zuul-executor-config:/etc/zuul
     command: ["/usr/bin/dumb-init", "/usr/bin/zuul-executor", "-d"]
 
   nodepool-launcher:
     from: "centos:7"
     roles:
-      - ansible-role-nodepool-container
+      - ansible-role-nodepool-launcher-container
     user: "{{ NODEPOOL_USER }}"
-    volumes:
-      - nodepool-config:/etc/nodepool
-      - nodepool-clouds:/etc/openstack
     command: ["/usr/bin/dumb-init", "/usr/bin/nodepool-launcher", "-d"]
 
-volumes:
-  zuul-scheduler-config:
-    docker:
-      external: True
-  zuul-merger-config:
-    docker:
-      external: True
-  zuul-executor-config:
-    docker:
-      external: True
-  nodepool-config:
-    docker:
-      external: True
-  nodepool-clouds:
-    docker:
-      external: True
+registries:
+  local.openshift:
+    url: https://local.openshift
+    pull_from_url: 172.30.1.1:5000

@@ -60,17 +60,22 @@
 - name: Create Zuul user
   user:
     name: "{{ ZUUL_USER }}"
-    uid: 1000
     group: root
     state: present
     createhome: yes
     home: "{{ ZUUL_USER_HOME }}"
 
+- name: Chmod Zuul user home to 777 for OpenShift
+  file:
+    path: "{{ ZUUL_USER_HOME }}"
+    state: directory
+    mode: 0777
+
 - name: Create /etc/zuul folder
   file:
     path: /etc/zuul
     state: directory
-    mode: 0755
+    mode: 0777
 
 - name: Clean yum cache
   command: yum clean all

@@ -1,2 +1,3 @@
 ---
-ZUUL_TENANT_CONFIG_PATH: /etc/zuul/main.yaml
+ZUUL_CONF_PATH: config/zuul-scheduler/zuul.conf
+ZUUL_TENANT_FILE_PATH: config/zuul-scheduler/main.yaml

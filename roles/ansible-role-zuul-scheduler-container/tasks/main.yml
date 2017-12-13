@@ -1,6 +1,12 @@
 ---
-- name: Template the Zuul config file
-  template:
-    src: zuul_conf_scheduler.j2
+- name: Copy the Zuul config file
+  copy:
+    src: "{{ ZUUL_CONF_PATH }}"
     dest: /etc/zuul/zuul.conf
+    mode: 0644
+
+- name: Copy the Zuul tenant file
+  copy:
+    src: "{{ ZUUL_TENANT_FILE_PATH }}"
+    dest: /etc/zuul/main.yaml
     mode: 0644

@@ -34,3 +34,9 @@
     state: present
     createhome: yes
     home: "{{ ZOOKEEPER_USER_HOME }}"
+
+- name: Chmod Zookeeper user home to 777 for OpenShift
+  file:
+    path: "{{ ZOOKEEPER_USER_HOME }}"
+    state: directory
+    mode: 0777

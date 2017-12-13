@@ -71,9 +71,9 @@
     state: touch
     mode: 0644
 
-- name: Template the Nodepool config file
-  template:
-    src: nodepool_yaml.j2
+- name: Copy the Nodepool config file
+  copy:
+    src: "{{ NODEPOOL_YAML_PATH }}"
     dest: /etc/nodepool/nodepool.yaml
     mode: 0644
 
@@ -83,9 +83,9 @@
     state: directory
     mode: 0755
 
-- name: Template the Nodepool clouds file
-  template:
-    src: clouds_yaml.j2
+- name: Copy the Nodepool clouds file
+  copy:
+    src: "{{ NODEPOOL_CLOUDS_YAML_PATH }}"
     dest: /etc/openstack/clouds.yaml
     mode: 0644
 
