@@ -1,0 +1,22 @@
+zookeeper-servers:
+  - host: zookeeper
+    port: 2181
+
+labels:
+  - name: test-label
+    min-ready: 1
+providers:
+  - name: test-cloud
+    cloud: test-cloud
+    cloud-images:
+      - name: test-image
+    pools:
+      - name: main
+        max-servers: 1
+        networks:
+          - test-network
+        labels:
+          - name: test-label
+            cloud-image: test-image
+            flavor-name: m1.small
+            key-name: test-key
