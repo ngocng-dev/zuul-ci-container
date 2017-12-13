@@ -1,0 +1,9 @@
+[gearman]
+server = zuul-scheduler
+
+[zookeeper]
+hosts = zookeeper
+
+[executor]
+finger_port = 17979
+workspace_root = /var/lib/zuul/workspace

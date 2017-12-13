@@ -1,0 +1,9 @@
+[gearman]
+server = zuul-scheduler
+
+[zookeeper]
+hosts=zookeeper
+
+[merger]
+git_dir = /var/lib/zuul/git
+zuul_url = zuul-scheduler
