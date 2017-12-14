@@ -46,6 +46,15 @@ services:
     user: "{{ ZUUL_USER }}"
     command: ["/usr/bin/dumb-init", "/usr/bin/zuul-executor", "-d"]
 
+  zuul-web:
+    from: "centos:7"
+    roles:
+      - ansible-role-zuul-web-container
+    expose:
+      - 9000
+    user: "{{ ZUUL_USER }}"
+    command: ["/usr/bin/dumb-init", "scl", "enable", "rh-python35", "zuul-web -d"]
+
   nodepool-launcher:
     from: "centos:7"
     roles:

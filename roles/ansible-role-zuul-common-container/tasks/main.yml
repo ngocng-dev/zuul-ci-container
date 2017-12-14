@@ -10,9 +10,9 @@
   command: yum -y install rpm-python
 
 - name: Install epel
-  yum: 
+  yum:
     name: epel-release
-    state: present 
+    state: present
     disable_gpg_check: yes
 
 - name: Install required packages
@@ -71,7 +71,7 @@
     state: directory
     mode: 0777
 
-- name: Create /etc/zuul folder
+- name: Chmod /etc/zuul to 777 for OpenShift
   file:
     path: /etc/zuul
     state: directory

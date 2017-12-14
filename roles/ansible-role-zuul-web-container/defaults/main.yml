@@ -1,0 +1,4 @@
+---
+ZUUL_CONF_PATH: config/zuul-web/zuul.conf
+ZUUL_USER: zuul
+ZUUL_USER_HOME: /var/lib/zuul

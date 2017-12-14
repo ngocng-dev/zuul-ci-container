@@ -1,3 +1,4 @@
+ansible-deployment/
 config/nodepool-launcher/*
 !config/nodepool-launcher/*.sample
 config/zuul-scheduler/*
@@ -6,3 +7,5 @@ config/zuul-merger/*
 !config/zuul-merger/*.sample
 config/zuul-executor/*
 !config/zuul-executor/*.sample
+config/zuul-web/*
+!config/zuul-web/*.sample

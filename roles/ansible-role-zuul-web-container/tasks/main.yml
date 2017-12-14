@@ -1,0 +1,144 @@
+---
+- name: Install dumb init
+  get_url:
+    dest: /usr/bin/dumb-init
+    url: https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64
+    mode: 0775
+    validate_certs: no
+
+- name: Bootstrap rpm python bindings
+  command: yum -y install rpm-python
+
+- name: Enable Software Collections repo
+  yum:
+    name: centos-release-scl
+    state: present
+    disable_gpg_check: yes
+
+- name: Install required packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - unzip
+    - gcc
+    - make
+    - openssl-devel
+    - rh-python35
+
+- name: Install libcurl package
+  yum:
+    name: libcurl
+    state: present
+    update_cache: yes
+
+- name: Update git package for getting curl https helper loaded
+  yum:
+    name: git
+    state: latest
+
+- name: Clone Zuul repo
+  git:
+    repo: 'git://github.com/openstack-infra/zuul'
+    dest: /opt/zuul
+    version: feature/zuulv3
+
+- name: Update setuptools package with SCL Python 3.5
+  command: scl enable rh-python35 "bash -c 'pip3 install -U setuptools'"
+
+- name: Install pip packages with SCL Python 3.5
+  command: scl enable rh-python35 "bash -c 'pip3 install -r /opt/zuul/requirements.txt'"
+
+- name: Install Zuul from source with SCL Python 3.5
+  command: scl enable rh-python35 "bash -c 'pip3 install -e /opt/zuul'"
+
+- name: Create Zuul user
+  user:
+    name: "{{ ZUUL_USER }}"
+    group: root
+    state: present
+    createhome: yes
+    home: "{{ ZUUL_USER_HOME }}"
+
+- name: Chmod Zuul user home to 777 for OpenShift
+  file:
+    path: "{{ ZUUL_USER_HOME }}"
+    state: directory
+    mode: 0777
+
+- name: Chmod /etc/zuul to 777 for OpenShift
+  file:
+    path: /etc/zuul
+    state: directory
+    mode: 0777
+
+- name: Clean yum cache
+  command: yum clean all
+
+- name: Copy the Zuul config file
+  copy:
+    src: "{{ ZUUL_CONF_PATH }}"
+    dest: /etc/zuul/zuul.conf
+    mode: 0644
+
+- name: Create static folder for zuul-web
+  file:
+    path: "{{ ZUUL_USER_HOME }}/static"
+    state: directory
+    mode: 0777
+
+- name: Create static/js folder for zuul-web
+  file:
+    path: "{{ ZUUL_USER_HOME }}/static/js"
+    state: directory
+    mode: 0777
+
+- name: Create static/bootstrap folder for zuul-web
+  file:
+    path: "{{ ZUUL_USER_HOME }}/static/bootstrap"
+    state: directory
+    mode: 0777
+
+- name: Copy angular on static
+  get_url:
+    url: https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js
+    dest: "{{ ZUUL_USER_HOME }}/static/js"
+    owner: "{{ ZUUL_USER }}"
+    group: root
+    mode: 0644
+
+- name: Copy jquery on static
+  get_url:
+    url: http://code.jquery.com/jquery.min.js
+    dest: "{{ ZUUL_USER_HOME }}/static/js"
+    owner: "{{ ZUUL_USER }}"
+    group: root
+    mode: 0644
+
+- name: Copy jquery-visibility on static
+  get_url:
+    url: https://raw.githubusercontent.com/mathiasbynens/jquery-visibility/master/jquery-visibility.js
+    dest: "{{ ZUUL_USER_HOME }}/static/js"
+    owner: "{{ ZUUL_USER }}"
+    group: root
+    mode: 0644
+
+- name: Copy jquery-graphite on static
+  get_url:
+    url: https://github.com/prestontimmons/graphitejs/blob/master/jquery.graphite.js
+    dest: "{{ ZUUL_USER_HOME }}/static/js"
+    owner: "{{ ZUUL_USER }}"
+    group: root
+    mode: 0644
+
+- name: Copy twitter bootstrap on static
+  unarchive:
+    src: https://github.com/twbs/bootstrap/releases/download/v3.1.1/bootstrap-3.1.1-dist.zip
+    dest: "{{ ZUUL_USER_HOME }}/static/"
+    remote_src: yes
+    owner: "{{ ZUUL_USER }}"
+    group: root
+    mode: 0777
+
+- name: Rename bootstrap-3.1.1-dist folder to bootstrap
+  command: mv {{ ZUUL_USER_HOME }}/static/bootstrap-3.1.1-dist {{ ZUUL_USER_HOME }}/static/bootstrap
