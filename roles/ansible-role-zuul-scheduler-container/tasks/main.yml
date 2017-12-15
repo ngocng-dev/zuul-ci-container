@@ -10,3 +10,9 @@
     src: "{{ ZUUL_TENANT_FILE_PATH }}"
     dest: /etc/zuul/main.yaml
     mode: 0644
+
+- name: Copy the Zuul Github key
+  copy:
+    src: "{{ ZUUL_GITHUB_KEY_PATH }}"
+    dest: /etc/zuul/github.key
+    mode: 0644

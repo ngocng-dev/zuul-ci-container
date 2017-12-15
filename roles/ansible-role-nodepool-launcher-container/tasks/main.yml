@@ -9,10 +9,10 @@
 - name: Bootstrap rpm python bindings
   command: yum -y install rpm-python
 
-- name: Install epel
-  yum: 
-    name: epel-release
-    state: present 
+- name: Enable Software Collections repo
+  yum:
+    name: centos-release-scl
+    state: present
     disable_gpg_check: yes
 
 - name: Install required packages
@@ -21,8 +21,7 @@
     state: present
   with_items:
     - gcc
-    - python-devel
-    - python-pip
+    - rh-python35
 
 - name: Install libcurl package
   yum:
@@ -41,14 +40,14 @@
     dest: /opt/nodepool
     version: feature/zuulv3
 
-- name: Install pip packages
-  pip:
-    requirements: /opt/nodepool/requirements.txt
+- name: Update setuptools package with SCL Python 3.5
+  command: scl enable rh-python35 "bash -c 'pip3 install -U setuptools'"
 
-- name: Install Nodepool from source
-  pip:
-    name: /opt/nodepool
-    editable: yes
+- name: Install pip packages with SCL Python 3.5
+  command: scl enable rh-python35 "bash -c 'pip3 install -r /opt/nodepool/requirements.txt'"
+
+- name: Install Nodepool from source with SCL Python 3.5
+  command: scl enable rh-python35 "bash -c 'pip3 install -e /opt/nodepool'"
 
 - name: Create Nodepool user
   user:
@@ -58,6 +57,26 @@
     state: present
     createhome: yes
     home: "{{ NODEPOOL_USER_HOME }}"
+
+- name: Chmod Nodepool user home to 777 for OpenShift
+  file:
+    path: "{{ NODEPOOL_USER_HOME }}"
+    state: directory
+    mode: 0777
+
+- name: Create the Nodepool user .ssh folder
+  file:
+    path: "{{ NODEPOOL_USER_HOME }}/.ssh"
+    state: directory
+    owner: "{{ NODEPOOL_USER }}"
+    group: root
+    mode: 0777
+
+- name: Copy the Nodepool ssh key
+  copy:
+    src: "{{ NODEPOOL_KEY_PATH }}"
+    dest: "{{ NODEPOOL_USER_HOME }}/.ssh/id_rsa"
+    mode: 0644
 
 - name: Create /etc/nodepool folder
   file:
@@ -88,6 +107,7 @@
     src: "{{ NODEPOOL_CLOUDS_YAML_PATH }}"
     dest: /etc/openstack/clouds.yaml
     mode: 0644
+
 
 - name: Clean yum cache
   command: yum clean all

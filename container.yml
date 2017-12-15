@@ -27,6 +27,7 @@ services:
       - ansible-role-zuul-scheduler-container
     expose:
       - 4730
+      - 8001
     user: "{{ ZUUL_USER }}"
     command: ["/usr/bin/dumb-init", "/usr/bin/zuul-scheduler", "-d"]
 
@@ -36,6 +37,9 @@ services:
       - ansible-role-zuul-common-container
       - ansible-role-zuul-merger-container
     user: "{{ ZUUL_USER }}"
+    environment:
+      - GIT_COMMITTER_NAME={{ ZUUL_USER }}
+      - GIT_COMMITTER_EMAIL={{ ZUUL_USER }}@ansible.com
     command: ["/usr/bin/dumb-init", "/usr/bin/zuul-merger", "-d"]
 
   zuul-executor:
@@ -44,6 +48,9 @@ services:
       - ansible-role-zuul-common-container
       - ansible-role-zuul-executor-container
     user: "{{ ZUUL_USER }}"
+    environment:
+      - GIT_COMMITTER_NAME={{ ZUUL_USER }}
+      - GIT_COMMITTER_EMAIL={{ ZUUL_USER }}@ansible.com
     command: ["/usr/bin/dumb-init", "/usr/bin/zuul-executor", "-d"]
 
   zuul-web:
@@ -60,7 +67,7 @@ services:
     roles:
       - ansible-role-nodepool-launcher-container
     user: "{{ NODEPOOL_USER }}"
-    command: ["/usr/bin/dumb-init", "/usr/bin/nodepool-launcher", "-d"]
+    command: ["/usr/bin/dumb-init", "scl", "enable", "rh-python35", "nodepool-launcher -d"]
 
 registries:
   local.openshift:

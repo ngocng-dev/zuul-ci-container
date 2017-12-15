@@ -4,3 +4,17 @@
     src: "{{ ZUUL_CONF_PATH }}"
     dest: /etc/zuul/zuul.conf
     mode: 0644
+
+- name: Create the Zuul .ssh folder
+  file:
+    path: "{{ ZUUL_USER_HOME }}/.ssh"
+    state: directory
+    owner: "{{ ZUUL_USER }}"
+    group: root
+    mode: 0777
+
+- name: Copy the Zuul ssh key
+  copy:
+    src: "{{ ZUUL_KEY_PATH }}"
+    dest: "{{ ZUUL_USER_HOME }}/.ssh/id_rsa"
+    mode: 0644

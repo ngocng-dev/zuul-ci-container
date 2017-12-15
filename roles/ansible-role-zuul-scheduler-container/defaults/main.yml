@@ -1,3 +1,4 @@
 ---
 ZUUL_CONF_PATH: config/zuul-scheduler/zuul.conf
 ZUUL_TENANT_FILE_PATH: config/zuul-scheduler/main.yaml
+ZUUL_GITHUB_KEY_PATH: config/zuul-scheduler/github.key

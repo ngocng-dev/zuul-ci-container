@@ -3,3 +3,4 @@ NODEPOOL_USER: nodepool
 NODEPOOL_USER_HOME: /var/lib/nodepool
 NODEPOOL_YAML_PATH: config/nodepool-launcher/nodepool.yaml
 NODEPOOL_CLOUDS_YAML_PATH: config/nodepool-launcher/clouds.yaml
+NODEPOOL_KEY_PATH: config/nodepool-launcher/nodepool.key
