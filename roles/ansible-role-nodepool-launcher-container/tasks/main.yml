@@ -21,6 +21,9 @@
     state: present
   with_items:
     - gcc
+    - make
+    - libffi-devel
+    - openssl-devel
     - rh-python35
 
 - name: Install libcurl package
