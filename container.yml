@@ -52,6 +52,7 @@ services:
       - GIT_COMMITTER_NAME={{ ZUUL_USER }}
       - GIT_COMMITTER_EMAIL={{ ZUUL_USER }}@ansible.com
     command: ["/usr/bin/dumb-init", "/usr/bin/zuul-executor", "-d"]
+    entrypoint: [/usr/bin/entrypoint.sh]
 
   zuul-web:
     from: "centos:7"

@@ -1,9 +1,40 @@
 ---
+- name: Install nss_wrapper
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - nss_wrapper
+    - gettext
+    - bubblewrap
+
+- name: Copy the entrypoint script
+  copy:
+    src: entrypoint.sh
+    dest: /usr/bin/entrypoint.sh
+    group: root
+    mode: 0770
+
+- name: Copy the /etc/passwd template
+  copy:
+    src: passwd.template
+    dest: /etc/passwd.template
+    group: root
+    mode: 0770
+
+- name: Touch the /etc/passwd_zuul file
+  file:
+    path: /etc/passwd_zuul
+    state: touch
+    group: root
+    mode: 0660
+
 - name: Copy the Zuul config file
   copy:
     src: "{{ ZUUL_CONF_PATH }}"
     dest: /etc/zuul/zuul.conf
-    mode: 0644
+    group: root
+    mode: 0640
 
 - name: Create the Zuul .ssh folder
   file:
@@ -11,10 +42,11 @@
     state: directory
     owner: "{{ ZUUL_USER }}"
     group: root
-    mode: 0777
+    mode: 0770
 
 - name: Copy the Zuul ssh key
   copy:
     src: "{{ ZUUL_KEY_PATH }}"
     dest: "{{ ZUUL_USER_HOME }}/.ssh/id_rsa"
+    group: root
     mode: 0644
