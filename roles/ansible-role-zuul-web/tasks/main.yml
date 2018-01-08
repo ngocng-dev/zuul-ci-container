@@ -16,19 +16,16 @@
   file:
     path: "{{ ZUUL_USER_HOME }}/static"
     state: directory
-    mode: 0777
+    mode: 0770
+
+- name: Copy app static files to Zuul home user static
+  shell: cp -R /opt/zuul/zuul/web/static/* {{ ZUUL_USER_HOME }}/static
 
 - name: Create static/js folder for zuul-web
   file:
     path: "{{ ZUUL_USER_HOME }}/static/js"
     state: directory
-    mode: 0777
-
-- name: Create static/bootstrap folder for zuul-web
-  file:
-    path: "{{ ZUUL_USER_HOME }}/static/bootstrap"
-    state: directory
-    mode: 0777
+    mode: 0770
 
 - name: Copy angular on static
   get_url:
@@ -69,7 +66,19 @@
     remote_src: yes
     owner: "{{ ZUUL_USER }}"
     group: root
-    mode: 0777
+    mode: 0770
 
-- name: Rename bootstrap-3.1.1-dist folder to bootstrap
-  command: mv {{ ZUUL_USER_HOME }}/static/bootstrap-3.1.1-dist {{ ZUUL_USER_HOME }}/static/bootstrap
+- name: Rename bootstrap folder
+  shell: mv {{ ZUUL_USER_HOME }}/static/bootstrap-3.1.1-dist {{ ZUUL_USER_HOME }}/static/bootstrap
+
+- name: Link app static to Zuul home user static
+  file:
+    path: /opt/zuul/zuul/web/static
+    state: absent
+
+- name: Link app static to Zuul home user static
+  file:
+    src: "{{ ZUUL_USER_HOME }}/static"
+    path: /opt/zuul/zuul/web/static
+    state: link
+    mode: 0770
