@@ -1,41 +1,11 @@
 ---
-- name: Install dumb init
-  get_url:
-    dest: /usr/bin/dumb-init
-    url: https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64
-    mode: 0775
-    validate_certs: no
-
-- name: Bootstrap rpm python bindings
-  command: yum -y install rpm-python
-
-- name: Enable Software Collections repo
-  yum:
-    name: centos-release-scl
-    state: present
-    disable_gpg_check: yes
-
 - name: Install required packages
   yum:
     name: "{{ item }}"
     state: present
   with_items:
-    - gcc
-    - make
-    - libffi-devel
     - openssl-devel
-    - rh-python35
-
-- name: Install libcurl package
-  yum:
-    name: libcurl
-    state: present
-    update_cache: yes
-
-- name: Update git package for getting curl https helper loaded
-  yum:
-    name: git
-    state: latest
+    - libffi-devel
 
 - name: Clone Nodepool repo
   git:
@@ -110,7 +80,3 @@
     src: "{{ NODEPOOL_CLOUDS_YAML_PATH }}"
     dest: /etc/openstack/clouds.yaml
     mode: 0644
-
-
-- name: Clean yum cache
-  command: yum clean all

@@ -1,0 +1,46 @@
+---
+- name: Create Zuul user
+  user:
+    name: "{{ ZUUL_USER }}"
+    group: root
+    state: present
+    createhome: yes
+    home: "{{ ZUUL_USER_HOME }}"
+
+- name: Chmod Zuul user home folder to 770 for OpenShift
+  file:
+    path: /var/lib/zuul
+    state: directory
+    mode: 0770
+
+- name: Create /etc/zuul folder
+  file:
+    path: /etc/zuul
+    state: directory
+    mode: 0755
+
+- name: Install required packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - openssl-devel
+    - libffi-devel
+
+- name: Clone Zuul repo
+  git:
+    repo: 'git://github.com/openstack-infra/zuul'
+    dest: /opt/zuul
+    version: feature/zuulv3
+
+- name: Update setuptools package with SCL Python 3.5
+  command: scl enable rh-python35 "bash -c 'pip3 install -U setuptools'"
+
+- name: Install pip requirements packages with SCL Python 3.5
+  command: scl enable rh-python35 "bash -c 'pip3 install -r /opt/zuul/requirements.txt'"
+
+- name: Install cffi with SCL Python 3.5
+  command: scl enable rh-python35 "bash -c 'pip3 install cffi'"
+
+- name: Install Zuul from source with SCL Python 3.5
+  command: scl enable rh-python35 "bash -c 'pip3 install -e /opt/zuul'"

@@ -14,61 +14,102 @@ services:
   zookeeper:
     from: "centos:7"
     roles:
-      - ansible-role-zookeeper-container
+      - ansible-role-dumb-init
+      - ansible-role-python-bindings
+      - ansible-role-zookeeper
+      - ansible-role-yum-clean-cache
     expose:
       - 2181
     user: "{{ ZOOKEEPER_USER }}"
-    command: ["/usr/bin/dumb-init", "/usr/lib/zookeeper/bin/zkServer.sh", "start-foreground"]
+    entrypoint: ["/usr/bin/dumb-init", "--"]
+    command: ["/usr/lib/zookeeper/bin/zkServer.sh", "start-foreground"]
 
   zuul-scheduler:
     from: "centos:7"
     roles:
-      - ansible-role-zuul-common-container
-      - ansible-role-zuul-scheduler-container
+      - ansible-role-dumb-init
+      - ansible-role-python-bindings
+      - ansible-role-build-toolchain
+      - ansible-role-scl-python
+      - ansible-role-git-https-helper
+      - ansible-role-zuul-common
+      - ansible-role-zuul-scheduler
+      - ansible-role-yum-clean-cache
     expose:
       - 4730
+    ports:
       - 8001
     user: "{{ ZUUL_USER }}"
-    command: ["/usr/bin/dumb-init", "/usr/bin/zuul-scheduler", "-d"]
+    entrypoint: ["/usr/bin/dumb-init", "--"]
+    command: ["scl", "enable", "rh-python35", "zuul-scheduler -d"]
 
   zuul-merger:
     from: "centos:7"
     roles:
-      - ansible-role-zuul-common-container
-      - ansible-role-zuul-merger-container
+      - ansible-role-dumb-init
+      - ansible-role-python-bindings
+      - ansible-role-build-toolchain
+      - ansible-role-scl-python
+      - ansible-role-git-https-helper
+      - ansible-role-zuul-common
+      - ansible-role-zuul-merger
+      - ansible-role-yum-clean-cache
     user: "{{ ZUUL_USER }}"
     environment:
       - GIT_COMMITTER_NAME={{ ZUUL_USER }}
       - GIT_COMMITTER_EMAIL={{ ZUUL_USER }}@ansible.com
-    command: ["/usr/bin/dumb-init", "/usr/bin/zuul-merger", "-d"]
+    entrypoint: ["/usr/bin/dumb-init", "--"]
+    command: ["scl", "enable", "rh-python35", "zuul-merger -d"]
 
   zuul-executor:
     from: "centos:7"
     roles:
-      - ansible-role-zuul-common-container
-      - ansible-role-zuul-executor-container
+      - ansible-role-dumb-init
+      - ansible-role-python-bindings
+      - ansible-role-build-toolchain
+      - ansible-role-scl-python
+      - ansible-role-git-https-helper
+      - ansible-role-zuul-common
+      - ansible-role-zuul-executor
+      - ansible-role-yum-clean-cache
     user: "{{ ZUUL_USER }}"
     environment:
       - GIT_COMMITTER_NAME={{ ZUUL_USER }}
       - GIT_COMMITTER_EMAIL={{ ZUUL_USER }}@ansible.com
-    command: ["/usr/bin/dumb-init", "/usr/bin/zuul-executor", "-d"]
-    entrypoint: [/usr/bin/entrypoint.sh]
+    entrypoint: ["/usr/bin/dumb-init", "--"]
+    command: ["/usr/bin/zuul-executor-wrapper.sh"]
 
   zuul-web:
     from: "centos:7"
     roles:
-      - ansible-role-zuul-web-container
-    expose:
+      - ansible-role-dumb-init
+      - ansible-role-python-bindings
+      - ansible-role-build-toolchain
+      - ansible-role-scl-python
+      - ansible-role-git-https-helper
+      - ansible-role-zuul-common
+      - ansible-role-zuul-web
+      - ansible-role-yum-clean-cache
+    ports:
       - 9000
     user: "{{ ZUUL_USER }}"
-    command: ["/usr/bin/dumb-init", "scl", "enable", "rh-python35", "zuul-web -d"]
+    working_dir: /var/lib/zuul
+    entrypoint: ["/usr/bin/dumb-init", "--"]
+    command: ["scl", "enable", "rh-python35", "zuul-web -d"]
 
   nodepool-launcher:
     from: "centos:7"
     roles:
-      - ansible-role-nodepool-launcher-container
+      - ansible-role-dumb-init
+      - ansible-role-python-bindings
+      - ansible-role-build-toolchain
+      - ansible-role-scl-python
+      - ansible-role-git-https-helper
+      - ansible-role-nodepool-launcher
+      - ansible-role-yum-clean-cache
     user: "{{ NODEPOOL_USER }}"
-    command: ["/usr/bin/dumb-init", "scl", "enable", "rh-python35", "nodepool-launcher -d"]
+    entrypoint: ["/usr/bin/dumb-init", "--"]
+    command: ["scl", "enable", "rh-python35", "nodepool-launcher -d"]
 
 registries:
   local.openshift:

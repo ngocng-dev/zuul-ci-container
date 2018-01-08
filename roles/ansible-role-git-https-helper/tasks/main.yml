@@ -1,0 +1,10 @@
+---
+- name: Install libcurl package
+  yum:
+    name: libcurl
+    state: present
+
+- name: Update git package for getting curl https helper loaded
+  yum:
+    name: git
+    state: latest

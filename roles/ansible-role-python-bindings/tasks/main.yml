@@ -1,0 +1,3 @@
+---
+- name: Bootstrap rpm python bindings
+  command: yum -y install rpm-python
