@@ -7,6 +7,7 @@ settings:
 
 defaults:
   ZUUL_USER: zuul
+  ZUUL_USER_EMAIL: zuul@zuul-ci.test
   NODEPOOL_USER: nodepool
   ZOOKEEPER_USER: zookeeper
 
@@ -75,7 +76,7 @@ services:
     user: "{{ ZUUL_USER }}"
     environment:
       - GIT_COMMITTER_NAME={{ ZUUL_USER }}
-      - GIT_COMMITTER_EMAIL={{ ZUUL_USER }}@ansible.com
+      - GIT_COMMITTER_EMAIL={{ ZUUL_USER_EMAIL }}
     entrypoint: ["/usr/bin/dumb-init", "--"]
     command: ["/usr/bin/zuul-executor-wrapper.sh"]
 
