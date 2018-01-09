@@ -3,7 +3,7 @@ version: "2"
 settings:
   conductor:
     base: centos:7
-  project_name: ansible-networking-zuul-ci
+  project_name: zuul-ci
 
 defaults:
   ZUUL_USER: zuul
